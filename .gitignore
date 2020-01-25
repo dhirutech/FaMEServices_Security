@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/FaMEServices/v16/Server/sqlite3
+/FaMEServices/obj/Debug/netcoreapp3.0
+/FaMEServices/obj
+/FaMEServices.Repositories/obj
+/FaMEServices.Security/obj
