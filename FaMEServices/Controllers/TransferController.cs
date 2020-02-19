@@ -10,12 +10,12 @@ namespace FaMEServices.Controllers
     public class TransferController : ControllerBase
     {
         private readonly ITransferLogic _transferLogic;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public TransferController(ITransferLogic transferLogic, IFaMELogger logger)
+        public TransferController(ITransferLogic transferLogic, IFaMEHelper helper)
         {
             _transferLogic = transferLogic;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

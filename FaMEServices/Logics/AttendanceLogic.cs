@@ -7,12 +7,12 @@ namespace FaMEServices.Logics
     public class AttendanceLogic : IAttendanceLogic
     {
         private readonly IAttendanceRepository _attendanceRepo;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public AttendanceLogic(IAttendanceRepository attendanceRepo, IFaMELogger logger)
+        public AttendanceLogic(IAttendanceRepository attendanceRepo, IFaMEHelper helper)
         {
             _attendanceRepo = attendanceRepo;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

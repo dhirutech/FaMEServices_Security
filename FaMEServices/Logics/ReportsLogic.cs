@@ -7,12 +7,12 @@ namespace FaMEServices.Logics
     public class ReportsLogic : IReportsLogic
     {
         private readonly IReportsRepository _reportsRepo;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public ReportsLogic(IReportsRepository reportsRepo, IFaMELogger logger)
+        public ReportsLogic(IReportsRepository reportsRepo, IFaMEHelper helper)
         {
             _reportsRepo = reportsRepo;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

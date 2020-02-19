@@ -10,12 +10,12 @@ namespace FaMEServices.Controllers
     public class ReportsController : ControllerBase
     {
         private readonly IReportsLogic _reportsLogic;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public ReportsController(IReportsLogic reportsLogic, IFaMELogger logger)
+        public ReportsController(IReportsLogic reportsLogic, IFaMEHelper helper)
         {
             _reportsLogic = reportsLogic;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

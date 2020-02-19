@@ -35,7 +35,7 @@ namespace FaMEServices
             services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IFaMELogger, FaMELogger>();
+            services.AddScoped<IFaMEHelper, FaMEHelper>();
             services.AddScoped<IProfileLogic, ProfileLogic>();
             services.AddScoped<IAttendanceLogic, AttendanceLogic>();
             services.AddScoped<ILeaveLogic, LeaveLogic>();

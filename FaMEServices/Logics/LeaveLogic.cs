@@ -7,12 +7,12 @@ namespace FaMEServices.Logics
     public class LeaveLogic : ILeaveLogic
     {
         private readonly ILeaveRepository _leaveRepo;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public LeaveLogic(ILeaveRepository leaveRepo, IFaMELogger logger)
+        public LeaveLogic(ILeaveRepository leaveRepo, IFaMEHelper helper)
         {
             _leaveRepo = leaveRepo;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

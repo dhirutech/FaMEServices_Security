@@ -10,12 +10,12 @@ namespace FaMEServices.Controllers
     public class LeaveController : ControllerBase
     {
         private readonly ILeaveLogic _leaveLogic;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public LeaveController(ILeaveLogic leaveLogic, IFaMELogger logger)
+        public LeaveController(ILeaveLogic leaveLogic, IFaMEHelper helper)
         {
             _leaveLogic = leaveLogic;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

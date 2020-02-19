@@ -10,12 +10,12 @@ namespace FaMEServices.Controllers
     public class AttendanceController : ControllerBase
     {
         private readonly IAttendanceLogic _attendanceLogic;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public AttendanceController(IAttendanceLogic attendanceLogic, IFaMELogger logger)
+        public AttendanceController(IAttendanceLogic attendanceLogic, IFaMEHelper helper)
         {
             _attendanceLogic = attendanceLogic;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }

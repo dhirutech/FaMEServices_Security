@@ -18,12 +18,12 @@ namespace FaMEServices.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IProfileLogic _profileLogic;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public ProfileController(IProfileLogic profileLogic, IFaMELogger logger)
+        public ProfileController(IProfileLogic profileLogic, IFaMEHelper helper)
         {
             _profileLogic = profileLogic;
-            _logger = logger;
+            _helper = helper;
         }
 
         private IdentityToken InitializeToken()
@@ -44,7 +44,7 @@ namespace FaMEServices.Controllers
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex);
+                return _helper.CreateApiError(ex);
             }
         }
 
@@ -60,7 +60,7 @@ namespace FaMEServices.Controllers
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex);
+                return _helper.CreateApiError(ex);
             }
         }
 
@@ -77,7 +77,7 @@ namespace FaMEServices.Controllers
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex);
+                return _helper.CreateApiError(ex);
             }
         }
     }

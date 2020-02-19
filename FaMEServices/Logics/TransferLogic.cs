@@ -7,12 +7,12 @@ namespace FaMEServices.Logics
     public class TransferLogic : ITransferLogic
     {
         private readonly ITransferRepository _transferRepo;
-        private readonly IFaMELogger _logger;
+        private readonly IFaMEHelper _helper;
 
-        public TransferLogic(ITransferRepository transferRepo, IFaMELogger logger)
+        public TransferLogic(ITransferRepository transferRepo, IFaMEHelper helper)
         {
             _transferRepo = transferRepo;
-            _logger = logger;
+            _helper = helper;
         }
     }
 }
