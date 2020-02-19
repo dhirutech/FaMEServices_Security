@@ -26,9 +26,9 @@ namespace FaMEServices.Security.Logics
                 var handler = new JwtSecurityTokenHandler();
                 _tokenS = handler.ReadToken(_idToken) as JwtSecurityToken;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                throw new Exception("Error processing person id from Authorization header.", e);
+                throw new Exception("Error processing personId from Authorization header.", ex);
             }
         }
 
@@ -50,7 +50,7 @@ namespace FaMEServices.Security.Logics
             {
                 if (_idToken != null && _tokenS != null)
                 {
-                    var accessRole = _tokenS.Claims.First(claim => claim.Type == "role").Value;
+                    var accessRole = _tokenS.Claims.First(claim => claim.Type == "Roles").Value;
                     _role = accessRole;
                 }
                 return _role;

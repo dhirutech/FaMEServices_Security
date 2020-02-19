@@ -1,4 +1,5 @@
 ﻿using FaMEServices.Security.Interfaces;
+using FaMEServices.Security.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,13 +14,17 @@ namespace FaMEServices.Security.Logics
         {
             _log = log;
         }
-        public ObjectResult CreateApiError(string message)
+        public ObjectResult CreateApiError(Exception ex)
         {
-            _log.LogError(message);
-            var errorStatus = HttpStatusCode.InternalServerError;
-            var res = new ObjectResult(message);
-            res.StatusCode = (int?)errorStatus;
-            return res;
+            _log.LogError(ex.Message);
+            return new ObjectResult((object)new ResponseObject()
+            {
+                Status = "Error",
+                Message = ex.Message,
+                StackTrace = ex.StackTrace,
+                ResponseCode = new int?(500),
+                Data = (object)null
+            });
         }
 
         public void LogDebug(string message)

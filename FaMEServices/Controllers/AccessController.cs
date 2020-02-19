@@ -1,10 +1,14 @@
 ﻿using FaMEServices.Interfaces;
 using FaMEServices.Models;
 using FaMEServices.Security.Interfaces;
+using FaMEServices.Security.Logics;
 using FaMEServices.Security.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using Models = FaMEServices.Models;
 
 namespace FaMEServices.Controllers
 {
@@ -30,6 +34,9 @@ namespace FaMEServices.Controllers
             try
             {
                 var result = await _profileLogic.GetLogedInUserProfile(Login.UserName, Login.Password);
+                if (result == null)
+                    return Unauthorized(FormatResponse("Error", null, "Invalid Credentials", (int)HttpStatusCode.Unauthorized));
+
                 var loggedInUserDetail = new UserDetail()
                 {
                     UserId = result.UserId,
@@ -40,17 +47,29 @@ namespace FaMEServices.Controllers
                     Role = result.Role
                 };
                 var accessToken = await _authService.GetAccessToken(loggedInUserDetail);
-                await _profileLogic.AddLogin();
+                await _profileLogic.AddLogin(result.UserId, accessToken.Token, accessToken.Refreshtoken);
                 if (accessToken == null)
-                {
-                    return Unauthorized("Invalid Credentials");
-                }
+                    return Unauthorized(FormatResponse("Error", null, "Invalid Credentials", (int)HttpStatusCode.Unauthorized));
+
                 return Ok(accessToken);
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex.Message);
+                return _logger.CreateApiError(ex);
             }
+        }
+
+        private Models.ResponseObject FormatResponse(string status, dynamic resData, string message, int resPonseCode)
+        {
+            var resObj = new Models.ResponseObject()
+            {
+                Status = status,
+                Message = message,
+                StackTrace = null,
+                ResponseCode = resPonseCode,
+                Data = resData
+            };
+            return resObj;
         }
     }
 }

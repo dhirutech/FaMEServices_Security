@@ -2,7 +2,8 @@
 using FaMEServices.Models;
 using FaMEServices.Security.Interfaces;
 using FaMEServices.Security.Logics;
-using FaMEServices.Security.Models;
+using FaMEServices.Security.Utilities;
+using FaMEServices.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -31,32 +32,23 @@ namespace FaMEServices.Controllers
             return new IdentityToken(AuthenticationHeaderValue.Parse(authorizationHeader));
         }
 
-        [Authorize(Roles = "Administrator,UnitInCharge")]
-        [HttpGet("getuserprofile/{userId}")]
-        public async Task<ActionResult> GetUserProfile(string userId)
+        [ValidateAuthorization("Roles", "Administrator,UnitInCharge")]
+        [HttpGet("getuserprofile")]
+        public async Task<ActionResult> GetUserProfile()
         {
             var _token = InitializeToken();
             try
             {
-                var result = await _profileLogic.GetUserProfile(Guid.Parse(userId));
-                var loggedInUserDetail = new UserDetail()
-                {
-                    UserId = result.UserId,
-                    UserName = result.UserName,
-                    Password = result.Password,
-                    FirstName = result.FirstName,
-                    LastName = result.LastName,
-                    Role = result.Role
-                };
-                return Ok(loggedInUserDetail);
+                var result = await _profileLogic.GetUserProfile(_token.UserId);
+                return Ok(result);
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex.Message);
+                return _logger.CreateApiError(ex);
             }
         }
 
-        [Authorize(Roles = "Administrator,UnitInCharge,User")]
+        [ValidateAuthorization("Roles", "Administrator,UnitInCharge,User")]
         [HttpPost("forgotpassword/{emailId}")]
         public async Task<ActionResult> ForgotPassword(string emailId)
         {
@@ -68,11 +60,11 @@ namespace FaMEServices.Controllers
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex.Message);
+                return _logger.CreateApiError(ex);
             }
         }
 
-        [Authorize(Roles = "Administrator,UnitInCharge,User")]
+        [ValidateAuthorization("Roles", "Administrator,UnitInCharge,User")]
         [HttpPost("resetpassword")]
         public async Task<ActionResult> ResetPassword(ResetPassword resetPassword)
         {
@@ -85,7 +77,7 @@ namespace FaMEServices.Controllers
             }
             catch (Exception ex)
             {
-                return _logger.CreateApiError(ex.Message);
+                return _logger.CreateApiError(ex);
             }
         }
     }

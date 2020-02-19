@@ -1,3 +1,4 @@
+using AutoMapper;
 using FaMEServices.Interfaces;
 using FaMEServices.Logics;
 using FaMEServices.Repositories.Interfaces;
@@ -30,6 +31,8 @@ namespace FaMEServices
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IFaMELogger, FaMELogger>();

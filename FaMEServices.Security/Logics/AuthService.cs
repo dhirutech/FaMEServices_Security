@@ -19,33 +19,31 @@ namespace FaMEServices.Security.Logics
         }
         public async Task<AuthToken> GetAccessToken(UserDetail user)
         {
-            if (user == null || DateTimeOffset.Now >= DateTimeOffset.UtcNow.AddDays(120))
-                return null;
+            if (user == null || DateTimeOffset.Now >= DateTimeOffset.UtcNow.AddDays(120.0))
+                return (AuthToken)null;
 
-            var jwtTokenHandler = new JwtSecurityTokenHandler();
-            var signingKey = Convert.FromBase64String(_config["Jwt:SigningSecret"]);
-            var expiryDuration = int.Parse(_config["Jwt:ExpiryDuration"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            JwtSecurityTokenHandler securityTokenHandler = new JwtSecurityTokenHandler();
+            byte[] key = Convert.FromBase64String(this._config["Jwt:SigningSecret"]);
+            int num = int.Parse(this._config["Jwt:ExpiryDuration"]);
+            string str = securityTokenHandler.WriteToken((SecurityToken)securityTokenHandler.CreateJwtSecurityToken(new SecurityTokenDescriptor()
             {
-                Issuer = null,              // Not required as no third-party is involved
-                Audience = null,            // Not required as no third-party is involved
-                IssuedAt = DateTime.UtcNow,
-                NotBefore = DateTime.UtcNow,
-                Expires = DateTime.UtcNow.AddMinutes(expiryDuration),
-                Subject = new ClaimsIdentity(new List<Claim> {
-                        new Claim("userid", user.UserId.ToString()),
-                        new Claim("role", user.Role)
-                    }),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(signingKey), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var jwtToken = jwtTokenHandler.CreateJwtSecurityToken(tokenDescriptor);
-            var token = jwtTokenHandler.WriteToken(jwtToken);
-            var authToken = new AuthToken()
+                Issuer = (string)null,
+                Audience = (string)null,
+                IssuedAt = new DateTime?(DateTime.UtcNow),
+                NotBefore = new DateTime?(DateTime.UtcNow),
+                Expires = new DateTime?(DateTime.UtcNow.AddMinutes((double)num)),
+                Subject = new ClaimsIdentity((IEnumerable<Claim>)new List<Claim>()
             {
-                Token = token,
+              new Claim("userid", user.UserId.ToString()),
+              new Claim("Roles", user.Role)
+            }),
+                SigningCredentials = new SigningCredentials((SecurityKey)new SymmetricSecurityKey(key), "http://www.w3.org/2001/04/xmldsig-more#hmac-sha256")
+            }));
+            return new AuthToken()
+            {
+                Token = str,
                 Refreshtoken = Guid.NewGuid().ToString()
             };
-            return authToken;
         }
     }
 }

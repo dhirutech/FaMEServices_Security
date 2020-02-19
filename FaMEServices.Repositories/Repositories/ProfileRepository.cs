@@ -1,50 +1,89 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FaMEServices.Repositories.Interfaces;
+﻿using FaMEServices.Repositories.Interfaces;
 using FaMEServices.Repositories.Models;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace FaMEServices.Repositories.Repositories
 {
     public class ProfileRepository : IProfileRepository
     {
-        private readonly List<User> _userList = new List<User>
+        public async Task<bool> AddLogin(AppaAccessLog appaAccessLog)
         {
-            new User { UserId = Guid.NewGuid(), UserName = "Admin", Password = "Admin", FirstName = "Dhiraj", LastName = "Bairagi", Role = "Administrator"},
-            new User { UserId = Guid.NewGuid(), UserName = "L1User", Password = "L1User", FirstName = "Subham", LastName = "Kumar", Role = "UnitInCharge"},
-            new User { UserId = Guid.NewGuid(), UserName = "L2User", Password = "L2User", FirstName = "Rajesh", LastName = "Pandit", Role = "UnitInCharge"},
-            new User { UserId = Guid.NewGuid(), UserName = "User", Password = "User", FirstName = "Sujeet", LastName = "Kumar", Role = "User"}
-        };
-
-        public async Task<bool> AddLogin()
-        {
-            return true;
+            using (var context = new androidfameContext())
+            {
+                await context.AppaAccessLog.AddAsync(appaAccessLog);
+                return await context.SaveChangesAsync() > 0;
+            }
         }
 
-        public async Task<bool> ForgotPassword(Guid userId, string emailId)
+        public async Task<UserAccount> ForgotPassword(Guid userId, string emailId, string newPassword)
         {
-            return true;
+            using (var context = new androidfameContext())
+            {
+                var user = await context.UserAccount
+                                   .FirstOrDefaultAsync(u => u.Id == userId && u.EmailId == emailId && u.IsActive);
+                if (user != null)
+                {
+                    user.Password = newPassword;
+                    user.UpdatedDateTime = DateTimeOffset.UtcNow;
+                }
+                await context.SaveChangesAsync();
+                return user;
+            }
         }
 
-        public async Task<User> GetLogedInUserProfile(string userName, string password)
+        public async Task<UserAccount> GetLogedInUserProfile(string userName, string password)
         {
-            return _userList.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            using (var context = new androidfameContext())
+            {
+                return await context.UserAccount
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.UserName == userName && u.Password == password && u.IsActive);
+            }
         }
 
-        public async Task<User> GetUserProfile(Guid userId)
+        public async Task<UserAccount> GetUserProfile(Guid userId)
         {
-            return _userList.FirstOrDefault(u => u.UserId == userId);
+            using (var context = new androidfameContext())
+            {
+                return await context.UserAccount
+                       .Include(u => u.Role)
+                       .Include(u => u.Company)
+                       .FirstOrDefaultAsync(u => u.Id == userId && u.IsActive);
+            }
         }
 
-        public async Task<bool> ResetPassword(Guid userId, string oldPassword, string newPassword)
+        public async Task<UserAccount> ResetPassword(Guid userId, string oldPassword, string newPassword)
         {
-            return true;
+            using (var context = new androidfameContext())
+            {
+                var user = await context.UserAccount
+                                   .FirstOrDefaultAsync(u => u.Id == userId && u.Password == oldPassword && u.IsActive);
+                if (user != null)
+                {
+                    user.Password = newPassword;
+                    user.UpdatedDateTime = DateTimeOffset.UtcNow;
+                }
+                await context.SaveChangesAsync();
+                return user;
+            }
         }
 
-        public async Task<bool> UpdaeLogin()
+        public async Task<bool> UpdateLogin(AppaAccessLog appaAccessLog)
         {
-            return true;
+            using (var context = new androidfameContext())
+            {
+                var login = await context.AppaAccessLog
+                                   .FirstOrDefaultAsync(l => l.UserId == appaAccessLog.UserId && l.IsActive);
+                if (login != null)
+                {
+                    login.Token = appaAccessLog.Token;
+                    login.RefreshToken = appaAccessLog.RefreshToken;
+                    login.UpdatedDateTime = DateTimeOffset.UtcNow;
+                }
+                return await context.SaveChangesAsync() > 0;
+            }
         }
     }
 }
