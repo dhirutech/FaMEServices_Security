@@ -16,6 +16,8 @@ namespace FaMEServices.Repositories.Models
         }
 
         public virtual DbSet<AppaAccessLog> AppaAccessLog { get; set; }
+        public virtual DbSet<Attendance> Attendance { get; set; }
+        public virtual DbSet<Client> Client { get; set; }
         public virtual DbSet<Company> Company { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<UserAccount> UserAccount { get; set; }
@@ -39,6 +41,46 @@ namespace FaMEServices.Repositories.Models
                     .WithMany(p => p.AppaAccessLog)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Attendance>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.CheckInLatitude).HasColumnType("decimal(10, 8)");
+
+                entity.Property(e => e.CheckInLongitude).HasColumnType("decimal(11, 8)");
+
+                entity.Property(e => e.CheckOutLatitude).HasColumnType("decimal(10, 8)");
+
+                entity.Property(e => e.CheckOutLongitude).HasColumnType("decimal(11, 8)");
+
+                entity.HasOne(d => d.Client)
+                    .WithMany(p => p.Attendance)
+                    .HasForeignKey(d => d.ClientId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Attendance)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull);
+            });
+
+            modelBuilder.Entity<Client>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.EmailId).HasMaxLength(160);
+
+                entity.Property(e => e.Latitude).HasColumnType("decimal(10, 8)");
+
+                entity.Property(e => e.Longitude).HasColumnType("decimal(11, 8)");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.Phone).HasMaxLength(80);
             });
 
             modelBuilder.Entity<Company>(entity =>
@@ -86,6 +128,11 @@ namespace FaMEServices.Repositories.Models
                 entity.Property(e => e.UserName)
                     .IsRequired()
                     .HasMaxLength(200);
+
+                entity.HasOne(d => d.Client)
+                    .WithMany(p => p.UserAccount)
+                    .HasForeignKey(d => d.ClientId)
+                    .HasConstraintName("FK_User_Client_ClientId");
 
                 entity.HasOne(d => d.Company)
                     .WithMany(p => p.UserAccount)

@@ -8,6 +8,7 @@ namespace FaMEServices.Repositories.Models
         public UserAccount()
         {
             AppaAccessLog = new HashSet<AppaAccessLog>();
+            Attendance = new HashSet<Attendance>();
         }
 
         public Guid Id { get; set; }
@@ -24,9 +25,12 @@ namespace FaMEServices.Repositories.Models
         public Guid? RoleId { get; set; }
         public DateTimeOffset? CreatedDateTime { get; set; }
         public DateTimeOffset? UpdatedDateTime { get; set; }
+        public Guid? ClientId { get; set; }
 
+        public virtual Client Client { get; set; }
         public virtual Company Company { get; set; }
         public virtual Role Role { get; set; }
         public virtual ICollection<AppaAccessLog> AppaAccessLog { get; set; }
+        public virtual ICollection<Attendance> Attendance { get; set; }
     }
 }
